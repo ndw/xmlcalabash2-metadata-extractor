@@ -53,7 +53,8 @@ class MetadataExtractor extends DefaultXmlStep {
   override def initialize(config: RuntimeConfiguration, params: Option[ImplParams]): Unit = {
     super.initialize(config, params)
     if (config.traceEnabled("verbose-init")) {
-      logger.info(BuildInfo.name)
+      logger.info(s"${BuildInfo.stepName} version ${BuildInfo.version} for XML Calabash ${BuildInfo.xmlCalabashVersion}")
+      logger.info(s"[${BuildInfo.name}/${BuildInfo.gitHash.substring(0,8)}, ${BuildInfo.vendor}, ${BuildInfo.vendorUri}]")
     }
   }
 

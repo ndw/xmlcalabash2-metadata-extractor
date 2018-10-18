@@ -7,10 +7,11 @@ scalaVersion := "2.12.6"
 
 lazy val saxonVersion = "9.8.0-14"
 lazy val xmlCalabashVersion = "1.9.14"
+lazy val vendor = "Norman Walsh"
+lazy val vendorUri = "https://xmlcalabash.com/"
+lazy val stepName = "cx:metadata-extractor"
 
 buildInfoKeys ++= Seq[BuildInfoKey](
-  "versopm" -> version,
-  /*
   // Hat tip to: https://stackoverflow.com/questions/24191469/how-to-add-commit-hash-to-play-templates
   "gitHash" -> new java.lang.Object() {
     override def toString: String = {
@@ -22,8 +23,12 @@ buildInfoKeys ++= Seq[BuildInfoKey](
       } catch {
         case ex: Exception => "FAILED"
       }
-    }}.toString()
-  */
+    }}.toString(),
+  "saxonVersion" -> saxonVersion,
+  "xmlCalabashVersion" -> xmlCalabashVersion,
+  "vendor" -> vendor,
+  "vendorUri" -> vendorUri,
+  "stepName" -> stepName
 )
 
 lazy val root = (project in file(".")).
