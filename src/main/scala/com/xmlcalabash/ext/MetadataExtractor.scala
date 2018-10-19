@@ -15,7 +15,7 @@ import com.xmlcalabash.util.MediaType
 import net.sf.saxon.s9api.QName
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.xmpbox.XMPMetadata
-import org.apache.xmpbox.`type`.{ArrayProperty, DateType, MIMEType, TextType}
+import org.apache.xmpbox.`type`.{ArrayProperty, Cardinality, DateType, MIMEType, TextType}
 import org.apache.xmpbox.xml.DomXmpParser
 
 import scala.collection.JavaConverters._
@@ -30,7 +30,6 @@ class MetadataExtractor extends DefaultXmlStep {
   private val _dir = new QName("", "dir")
   private val _type = new QName("", "type")
   private val _name = new QName("", "name")
-  private val c_e = new QName("c",  XProcConstants.ns_c,"e")
 
   private val controls = Array[String]("0000",
             "0001", "0002", "0003", "0004", "0005", "0006", "0007",
@@ -134,6 +133,7 @@ class MetadataExtractor extends DefaultXmlStep {
   }
 
   private def pdfExtract(stream: InputStream): Unit = {
+    // This is *absurdly* incomplete
 
     val _pages = new QName("", "pages")
     val _width = new QName("", "width")
@@ -194,23 +194,26 @@ class MetadataExtractor extends DefaultXmlStep {
         for (prop <- schema.getAllProperties.asScala) {
           val pfx = nsMap(prop.getNamespace)
           tree.addStartElement(new QName(pfx, prop.getNamespace, prop.getPropertyName))
-
-          prop match {
-            case p: ArrayProperty =>
-              tree.addAttribute(XProcConstants._type, "array")
-            case _ => Unit
-          }
-
           tree.startContent()
 
           prop match {
             case p: ArrayProperty =>
+              val outer = if (p.getArrayType == Cardinality.Alt) {
+                new QName("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "Alt")
+              } else {
+                new QName("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "Seq")
+              }
+              val inner = new QName("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "li")
+
+              tree.addStartElement(outer)
+              tree.startContent()
               for (value <- p.getElementsAsString.asScala) {
-                tree.addStartElement(c_e)
+                tree.addStartElement(inner)
                 tree.startContent()
                 tree.addText(value)
                 tree.addEndElement()
               }
+              tree.addEndElement()
             case p: MIMEType =>
               tree.addText(p.getStringValue)
             case p: TextType =>
