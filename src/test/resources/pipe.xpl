@@ -7,14 +7,14 @@
   <p:output port="result" sequence='true'
             serialization="map { 'omit-xml-declaration': true(),
                                  'indent': true() }"/>
-  <p:input port="source">
-    <p:document href="/Users/ndw/Downloads/xmlss-deskpot.pdf"/>
-  </p:input>
+  <p:option name="document" required="true"/>
 
   <p:declare-step type="cx:metadata-extractor">
     <p:input port="source" content-types="image/*"/>
     <p:output port="result" content-types="application/xml"/>
   </p:declare-step>
+
+  <p:load href="{$document}"/>
 
   <cx:metadata-extractor/>
 
